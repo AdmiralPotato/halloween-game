@@ -141,7 +141,7 @@ export default new Vuex.Store({
             alert(`END. MOVES: ${state.moves}, SCORE: ${state.score}`)
             dispatch('startLevel', state.currentLevel)
           },
-          10
+          200
         )
       }
     }

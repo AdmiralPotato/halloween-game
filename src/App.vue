@@ -1,25 +1,22 @@
 <template>
   <div id="app">
-    <Controls />
+    <GameThree />
     <GameAscii />
-    <div>
-      <img
-        alt="A Ghost that loves Candy Corn"
-        src="https://assets1.ello.co/uploads/asset/attachment/4751629/ello-optimized-3f90478d.gif"
-      />
-    </div>
+    <Controls />
   </div>
 </template>
 
 <script>
 import Controls from './components/Controls'
 import GameAscii from './components/GameAscii'
+import GameThree from './components/GameThree'
 
 export default {
   name: 'app',
   components: {
     Controls,
-    GameAscii
+    GameAscii,
+    GameThree
   },
   async mounted () {
     this.$store.dispatch('loadLevels')

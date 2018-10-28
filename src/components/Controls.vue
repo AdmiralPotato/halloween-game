@@ -60,6 +60,7 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 2;
   .relative {
     position: relative;
     height: 9rem;

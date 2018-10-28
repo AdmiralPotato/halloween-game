@@ -1,7 +1,7 @@
 <template>
-  <div class="game-view">
-      <p>Score: {{score}}</p>
-      <p>Moves: {{moves}}</p>
+  <div class="game-ascii">
+    <p>Score: {{score}}</p>
+    <p>Moves: {{moves}}</p>
     <pre v-html="map"></pre>
   </div>
 </template>
@@ -21,12 +21,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.game-view {
+.game-ascii {
+  position: relative;
+  z-index: 1;
+
   pre {
     font-family: monospace;
     font-size: 1.5rem;
     line-height: 1.25rem;
     letter-spacing: 0.25rem;
+    text-align: left;
   }
 }
 </style>
