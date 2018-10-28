@@ -13,6 +13,12 @@
 </template>
 
 <script>
+const keyMap = {
+  'ArrowUp': 'up',
+  'ArrowDown': 'down',
+  'ArrowLeft': 'left',
+  'ArrowRight': 'right'
+}
 export default {
   name: 'Controls',
   buttons: [
@@ -20,7 +26,21 @@ export default {
     { label: '⬇', direction: 'down' },
     { label: '⬅', direction: 'left' },
     { label: '➡', direction: 'right' }
-  ]
+  ],
+  mounted () {
+    window.document.body.addEventListener('keydown', this.handleKeydown)
+  },
+  destroyed () {
+    window.document.body.removeEventListener('keydown', this.handleKeydown)
+  },
+  methods: {
+    handleKeydown (event) {
+      const direction = keyMap[event.key]
+      if (direction) {
+        this.$store.dispatch('move', direction)
+      }
+    }
+  }
 }
 </script>
 
