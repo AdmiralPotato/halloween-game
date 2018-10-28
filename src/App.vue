@@ -20,6 +20,9 @@ export default {
   components: {
     Controls,
     GameAscii
+  },
+  async mounted () {
+    this.$store.dispatch('loadLevels')
   }
 }
 </script>

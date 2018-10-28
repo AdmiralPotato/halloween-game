@@ -3,21 +3,6 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-const gameTemplate = `
-HHHHHHHHHHHHHHHHHH-
-G                 H
-HHHHHHHHHHHHHHHHH H
--HHHHHHHHHHHHHHHH H
-H                 H
-H HHHHHHHH HHHHHH H
-H H------H H-HH-H H
-H HHHHHHHH HH  HH H
-H              HH H
-H HHHHHHHH HH  HH H
-H H------H H-HH-H H
-H HHHHHHHH HHHHHH H
-H                 X
--HHHHHHHHHHHHHHHHH-`
 const spliceSlice = (str, index, count, add) => {
   return str.slice(0, index) + add + str.slice(index + count)
 }
@@ -62,7 +47,7 @@ const getCoordOfDirection = (state, direction) => {
     alert(`END. MOVES: ${moves}, SCORE: ${score}`)
     moves = 0
     score = 0
-    map = gameTemplate
+    map = state.levels.length ? state.levels[state.currentLevel] : null
   }
   return {
     charAtNewIndex,
@@ -81,7 +66,9 @@ export default new Vuex.Store({
   state: {
     moves: 0,
     score: 0,
-    map: gameTemplate
+    levels: [],
+    currentLevel: null,
+    map: null
   },
   getters: {
     score: state => {
@@ -92,9 +79,24 @@ export default new Vuex.Store({
     },
     map: state => {
       return state.map
+    },
+    levels: state => {
+      return state.levels
+    },
+    currentLevel: state => {
+      return state.currentLevel
     }
   },
   mutations: {
+    setLevels (state, payload) {
+      state.levels = payload
+    },
+    startLevel (state, payload) {
+      state.currentLevel = payload
+      state.map = state.levels.length ? state.levels[state.currentLevel] : null
+      state.score = 0
+      state.moves = 0
+    },
     move (state, payload) {
       const direction = payload
       const newState = getCoordOfDirection(state, direction)
@@ -109,6 +111,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    async loadLevels ({ dispatch }) {
+      const result = await fetch('./levels.txt')
+      const levelText = await result.text()
+      const levelSplit = levelText.split('\n\n').map((t) => '\n' + t)
+      dispatch('setLevels', levelSplit)
+    },
+    setLevels ({ commit, dispatch }, payload) {
+      commit('setLevels', payload)
+      if (payload.length) {
+        dispatch('startLevel', 0)
+      }
+    },
+    startLevel ({ commit }, payload) {
+      commit('startLevel', payload)
+    },
     move ({ state, commit }, payload) {
       commit('move', payload)
     }

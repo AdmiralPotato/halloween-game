@@ -9,6 +9,15 @@
         @click.prevent.stop="$store.dispatch('move', item.direction)"
       >{{item.label}}</button>
     </div>
+    <div class="levels">
+      <button
+        v-for="(item, index) in $store.getters.levels"
+        :key="index"
+        class="control"
+        :class="{active: $store.getters.currentLevel === index}"
+        @click.prevent.stop="$store.dispatch('startLevel', index)"
+      >{{index}}</button>
+    </div>
   </div>
 </template>
 
@@ -37,6 +46,8 @@ export default {
     handleKeydown (event) {
       const direction = keyMap[event.key]
       if (direction) {
+        event.preventDefault()
+        event.stopPropagation()
         this.$store.dispatch('move', direction)
       }
     }
@@ -53,10 +64,15 @@ export default {
     position: relative;
     height: 9rem;
     width: 9rem;
+    .control {
+      position: absolute;
+    }
+  }
+  .levels {
+    position: relative;
   }
   .control {
     display: block;
-    position: absolute;
     width: 3rem;
     height: 3rem;
     line-height: 3rem;
@@ -71,6 +87,7 @@ export default {
     &.down { top: auto; }
     &.left { right: auto; }
     &.right { left: auto; }
+    &.active { background-color: #ddd; }
   }
 }
 </style>
