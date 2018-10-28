@@ -1,28 +1,39 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Controls />
+    <GameAscii />
+    <div>
+      <img
+        alt="A Ghost that loves Candy Corn"
+        src="https://assets1.ello.co/uploads/asset/attachment/4751629/ello-optimized-3f90478d.gif"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Controls from './components/Controls'
+import GameAscii from './components/GameAscii'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    Controls,
+    GameAscii
   }
 }
 </script>
 
 <style lang="scss">
+body {
+  background-color: #5d3758;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #ccc;
   margin-top: 60px;
 }
 </style>
