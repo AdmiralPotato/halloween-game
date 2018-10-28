@@ -4,22 +4,22 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const gameTemplate = `
-HHHHHHHHHHHHHHHHHH 
-                  H
+HHHHHHHHHHHHHHHHHH-
+G                 H
 HHHHHHHHHHHHHHHHH H
- HHHHHHHHHHHHHHHH H
-H         G       H
+-HHHHHHHHHHHHHHHH H
+H                 H
 H HHHHHHHH HHHHHH H
-H H      H H HH H H
+H H------H H-HH-H H
 H HHHHHHHH HH  HH H
 H              HH H
 H HHHHHHHH HH  HH H
-H H      H H HH H H
+H H------H H-HH-H H
 H HHHHHHHH HHHHHH H
 H                 X
- HHHHHHHHHHHHHHHHHH`
+-HHHHHHHHHHHHHHHHH-`
 const spliceSlice = (str, index, count, add) => {
-  return str.slice(0, index) + add + str.slice(index + count);
+  return str.slice(0, index) + add + str.slice(index + count)
 }
 const getCoordOfDirection = (state, direction) => {
   const mapLast = state.map
@@ -55,7 +55,10 @@ const getCoordOfDirection = (state, direction) => {
   ) {
     moves += 1
   }
-  if (charAtNewIndex === 'X') {
+  if (
+    charAtNewIndex === 'X' ||
+    map.indexOf('H') === -1
+  ) {
     alert(`END. MOVES: ${moves}, SCORE: ${score}`)
     moves = 0
     score = 0
