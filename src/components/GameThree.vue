@@ -8,6 +8,65 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as THREE from 'three'
+window.THREE = THREE
+require('three/examples/js/loaders/GLTFLoader')
+require('three/examples/js/controls/OrbitControls')
+
+const gltfLoader = new THREE.GLTFLoader()
+
+const prepGLTFPlayer = (gltf) => {
+  let lastTime = 0
+  gltf.animationNameMap = {}
+  gltf.animations.forEach((animation) => {
+    gltf.animationNameMap[animation.name] = animation
+  })
+  gltf.update = (time) => {
+    const dt = (time - lastTime) / 1000
+    gltf.mixer.update(dt)
+    lastTime = time
+  }
+  gltf.playAnimationByName = (name) => {
+    if (gltf.lastAnimation !== name) {
+      gltf.mixer = new THREE.AnimationMixer(gltf.scene)
+      const clip = gltf.animationNameMap[name]
+      let action = gltf.mixer.clipAction(clip)
+      action.play()
+      gltf.lastAnimation = name
+    }
+  }
+}
+
+let gltfAssetMap = {}
+let unpackedObjectMap = {}
+const loadGltfAssets = async (assetList) => {
+  let promiseList = []
+  assetList.forEach((asset) => {
+    if (!gltfAssetMap[asset]) {
+      let _resolve
+      let _reject
+      const promise = new Promise((resolve, reject) => {
+        _resolve = resolve
+        _reject = reject
+      })
+      gltfLoader.load(
+        `models/${asset}.gltf`,
+        (gltf) => {
+          gltfAssetMap[asset] = gltf
+          prepGLTFPlayer(gltf)
+          gltf.scene.children.forEach((item) => {
+            unpackedObjectMap[item.name] = item
+          })
+          _resolve(gltf)
+        },
+        undefined,
+        _reject
+      )
+      promiseList.push(promise)
+    }
+  })
+  await Promise.all(promiseList)
+  return gltfAssetMap
+}
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -28,45 +87,92 @@ directionalLight.position.set(-2, 2, 2)
 directionalLight.castShadow = true
 scene.add(directionalLight)
 
-const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5)
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1.0)
 directionalLight2.position.set(1, 2, 1)
 directionalLight2.castShadow = true
 scene.add(directionalLight2)
 
-const ambientLight = new THREE.AmbientLight(0x808080, 0.5)
+const ambientLight = new THREE.AmbientLight(0xffffff, 2)
 scene.add(ambientLight)
 
 const light = new THREE.HemisphereLight(0xcefeff, 0xb3eaf0, 0.5)
 scene.add(light)
-scene.fog = new THREE.Fog('#262626', 7, 9)
+scene.fog = new THREE.Fog('#5d3758', 9, 12)
 
-const shape = new THREE.ConeGeometry(0.5, 0.5, 8)
-const streetMat = new THREE.MeshStandardMaterial({ color: '#333333' })
-const houseCandyMat = new THREE.MeshStandardMaterial({ color: '#ff9900' })
-const houseEmptyMat = new THREE.MeshStandardMaterial({ color: '#443300' })
-const matMap = {
-  G: new THREE.MeshStandardMaterial({ color: '#ffffff' }),
-  S: new THREE.MeshStandardMaterial({ color: '#00ff00' }),
-  '!': new THREE.MeshStandardMaterial({ color: '#ff0000' })
-}
 const deg45 = Math.PI / 4
-const houseDirectionMap = {
-  X: 0,
-  Z: -deg45,
-  A: -deg45 * 2,
-  Q: -deg45 * 3,
-  W: -deg45 * 4,
-  E: -deg45 * 5,
-  D: -deg45 * 6,
-  C: -deg45 * 7
+const charDirectionMap = {
+  X: -deg45 * 4,
+  Z: -deg45 * 6,
+  A: -deg45 * 6,
+  Q: 0,
+  W: 0,
+  E: -deg45 * 2,
+  D: -deg45 * 2,
+  C: -deg45 * 4,
+  'S': 0,
+  ' ': 0,
+  '┃': 0,
+  '━': -deg45 * 2,
+  '┓': -deg45 * 4,
+  '┛': -deg45 * 6,
+  '┗': 0,
+  '┏': -deg45 * 2,
+  ',': -deg45 * 2,
+  '┻': 0,
+  '┣': -deg45 * 2,
+  '┳': -deg45 * 4,
+  '┫': -deg45 * 6,
+  '╋': 0,
+  '╻': -deg45 * 4,
+  '╹': 0,
+  '╺': -deg45 * 2,
+  '╸': -deg45 * 6,
+  'P': 0
 }
-const housesRegex = /[QWEDCXZA]/gim
-const housesUpperRegex = /[QWEDCXZA]/gm
-const housesLowerRegex = /[qwedcxza]/gm
+const charModelMap = {
+  'G': 'ghost',
+  'Q': 'house_corner',
+  'W': 'house',
+  'E': 'house_corner',
+  'D': 'house',
+  'C': 'house_corner',
+  'X': 'house',
+  'Z': 'house_corner',
+  'A': 'house',
+  'S': 'road_spawn',
+  ' ': 'park',
+  '┃': 'road_horizontal',
+  '━': 'road_horizontal',
+  '┓': 'road_corner',
+  '┛': 'road_corner',
+  '┗': 'road_corner',
+  '┏': 'road_corner',
+  ',': 'start',
+  '┻': 'road_tee',
+  '┣': 'road_tee',
+  '┳': 'road_tee',
+  '┫': 'road_tee',
+  '╋': 'road_plus',
+  '╻': 'road_end',
+  '╹': 'road_end',
+  '╺': 'road_end',
+  '╸': 'road_end',
+  'P': 'park'
+}
+const houses = [
+  'house_a',
+  'house_b',
+  'house_c'
+]
+const getHouseRandom = () => {
+  const index = Math.floor(houses.length * Math.random())
+  return houses[index]
+}
 
 let lastLevel = null
 let itemLevelMap = {}
-const mapAsciiStateToThree = (map, currentLevel) => {
+let player
+const mapAsciiStateToThree = (map, mapRaw, currentLevel) => {
   if (lastLevel !== currentLevel) {
     const lastItemHolder = itemLevelMap[lastLevel]
     if (lastItemHolder) {
@@ -74,17 +180,16 @@ const mapAsciiStateToThree = (map, currentLevel) => {
     }
     lastLevel = currentLevel
   }
-  let chars = [...map]
-  chars.shift()
   let itemHolder = itemLevelMap[currentLevel]
+  const xMax = map.indexOf('\n', 1) - 1
+  const yMax = (map.match(/\n/g) || []).length - 1
+  const xOffset = (-xMax / 2) + 0.5
+  const yOffset = (-yMax / 2)
   if (!itemHolder) {
-    const xMax = map.indexOf('\n', 1) - 1
-    const yMax = (map.match(/\n/g) || []).length - 1
+    let chars = [...mapRaw]
+    chars.shift()
     const largestAxis = Math.max(xMax, yMax)
-    const xOffset = (-xMax / 2) + 0.5
-    const yOffset = (-yMax / 2)
     const scale = (1 / largestAxis) * 5
-    console.log({ scale })
     itemHolder = itemLevelMap[currentLevel] = new THREE.Object3D()
     itemHolder.scale.setScalar(scale)
     chars.forEach((char, index) => {
@@ -93,35 +198,49 @@ const mapAsciiStateToThree = (map, currentLevel) => {
       let item = itemHolder.children[index]
       if (!item) {
         if (char !== '\n') {
-          item = new THREE.Mesh(shape)
+          const charUpper = char.toLocaleUpperCase()
+          let modelName = charModelMap[charUpper] || 'road_spawn'
+          if (modelName === 'house') {
+            modelName = getHouseRandom()
+          }
+          const rotation = charDirectionMap[charUpper] || 0
+          item = unpackedObjectMap[modelName].clone()
           item.position.x = -(x + xOffset)
           item.position.y = (y + yOffset)
-          if (char.match(housesRegex)) {
-            item.rotation.z = houseDirectionMap[char.toLocaleUpperCase()]
+          item.rotation.z = rotation
+          if (modelName.indexOf('house') === 0) {
+            item.add(unpackedObjectMap.candy_circle.clone())
           }
         } else {
           item = new THREE.Object3D()
         }
         itemHolder.add(item)
+        itemHolder.rotation.x = -deg45 * 2
       }
     })
   }
+  if (!player) {
+    player = unpackedObjectMap.ghost.clone()
+  }
+  itemHolder.add(player)
+  let chars = [...map]
+  chars.shift()
   chars.forEach((char, index) => {
-    let item = itemHolder.children[index]
-    let material = matMap[char]
-    if (!material && char.match(housesUpperRegex)) {
-      material = houseCandyMat
-    } else if (!material && char.match(housesLowerRegex)) {
-      material = houseEmptyMat
+    if (char === 'G') {
+      const y = Math.floor(index / (xMax + 1))
+      const x = (index - y) % xMax
+      player.position.x = -(x + xOffset)
+      player.position.y = y + yOffset
     }
-    item.material = material || streetMat
+    let item = itemHolder.children[index]
+    if (item.name.indexOf('house') === 0) {
+      const show = char === char.toLocaleUpperCase()
+      item.children[0].visible = show
+    }
   })
   scene.add(itemHolder)
 }
 
-camera.position.set(0, 0, 8)
-camera.lookAt(new THREE.Vector3(0, 0, 0))
-camera.rotation.z = Math.PI
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 let width
@@ -167,6 +286,17 @@ const loop = (time) => {
 }
 const start = (parentNode) => {
   parentNode.appendChild(renderer.domElement)
+  let controls = new THREE.OrbitControls(camera, renderer.domElement)
+  camera.position.set(0, 8, -4)
+  camera.lookAt(new THREE.Vector3(0, 0, 0))
+  camera.rotation.z = -Math.PI
+  controls.enableDamping = true // an animation loop is required when either damping or auto-rotation are enabled
+  controls.dampingFactor = 0.25
+  controls.screenSpacePanning = false
+  controls.minDistance = 1
+  controls.maxDistance = 10
+  controls.minPolarAngle = -Infinity // Math.PI / 2
+  controls.maxPolarAngle = Math.PI / 2
   requestAnimationFrame(loop)
 }
 
@@ -175,9 +305,16 @@ const animate = (time) => {
 }
 
 export default {
+  data () {
+    return {
+      loaded: false,
+      lastMap: null
+    }
+  },
   computed: {
     ...mapGetters([
       'currentLevel',
+      'levels',
       'score',
       'moves',
       'map'
@@ -185,26 +322,28 @@ export default {
   },
   mounted () {
     start(this.$el)
+    this.startLoad()
   },
   destroyed () {
     go = false
   },
-  watch: {
-    currentLevel (currentLevel) {
-      if (
-        this.map &&
-        currentLevel !== null
-      ) {
-        mapAsciiStateToThree(this.map, currentLevel)
-      }
-    },
-    map (mapCurrent) {
-      if (
-        mapCurrent &&
-        this.currentLevel !== null
-      ) {
-        mapAsciiStateToThree(mapCurrent, this.currentLevel)
-      }
+  beforeUpdate () {
+    if (
+      this.map &&
+      this.loaded &&
+      this.lastMap !== this.map &&
+      this.currentLevel !== null
+    ) {
+      mapAsciiStateToThree(this.map, this.levels[this.currentLevel], this.currentLevel)
+      this.lastMap = this.map
+    }
+  },
+  methods: {
+    async startLoad () {
+      await loadGltfAssets(['city'])
+      console.log('Loaded', unpackedObjectMap)
+      this.loaded = true
+      mapAsciiStateToThree(this.map, this.levels[this.currentLevel], this.currentLevel)
     }
   }
 }

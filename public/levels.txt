@@ -1,4 +1,4 @@
-S ┃━┓┛┗┏┻┣┳┫╋╻╹╺╸
+S ┃━┓┛┗┏┻┣┳┫╋╻╹╺╸P
 
 XXXXXP
 S━━━┓A
@@ -26,6 +26,26 @@ D┃QWWWE┃A
 D┃ZXXXC┃A
 D┗━━━━━┻!
 PWWWWWWWP
+
+XXXXXXXXXP
+S┳━━━━━━┓A
+D┃QWWWWE┃A
+D┃ZXPPXC┃A
+D┣━╸AD╺━┫A
+D┃QWPPWE┃A
+D┃ZXXXXC┃A
+D┗━━━━━━┻!
+PWWWWWWWWP
+
+xXXxxXXxP
+S┳━━━━━┓a
+D┃qWwwE┃A
+d┃ZxxXC┃a
+D┣━━━━━┫A
+d┃qWweE┃a
+d┃ZxXxC┃a
+D┗━━━━━┻!
+PWwwWWWwP
 
 XXXXXXXXP
 S┳━━┳━━┓A
@@ -75,7 +95,7 @@ PXXXXXXXXXXXXXXC┃A
 D┏━━━━━━━━┳━━━━━┫A
 D┃QWWWWWWE┃QWWWE┃A
 D┃APPPPPPD┃APXPD┃A
-D┃ZXXXXXXC┃ZS╻AD┃A
+D┃ZXXXXXXC┃ZC╻AD┃A
 D┣━━━━━━━━╋━━┫AD┃A
 D┃QWWWWWWE┃QD╹AD┃A
 D┃APPPPPPD┃APWPD┃A
