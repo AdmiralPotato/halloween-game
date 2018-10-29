@@ -1,8 +1,10 @@
 <template>
   <div class="game-ascii">
-    <p>Score: {{score}}</p>
-    <p>Moves: {{moves}}</p>
-    <pre v-html="map"></pre>
+    <pre>
+Score: {{score}}
+Moves: {{moves}}
+<span v-html="map"></span>
+    </pre>
   </div>
 </template>
 

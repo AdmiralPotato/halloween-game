@@ -6,6 +6,7 @@ Vue.use(Vuex)
 const spliceSlice = (str, index, count, add) => {
   return str.slice(0, index) + add + str.slice(index + count)
 }
+const uppercaseHousesRegex = /[QWEDCXZA]/gm
 const getCoordOfDirection = (state, direction) => {
   const mapLast = state.map
   const xMax = mapLast.indexOf('\n', 1) - 1
@@ -31,9 +32,9 @@ const getCoordOfDirection = (state, direction) => {
     map = spliceSlice(map, gIndexLast, 1, lastCharAtSpace)
     map = spliceSlice(map, gIndex, 1, 'G')
   }
-  if (charAtNewIndex === 'H') {
+  if (charAtNewIndex.match(uppercaseHousesRegex)) {
     score += 1
-    map = spliceSlice(map, newIndex, 1, 'h')
+    map = spliceSlice(map, newIndex, 1, charAtNewIndex.toLocaleLowerCase())
   }
   if (
     gIndex !== gIndexLast ||
@@ -133,8 +134,8 @@ export default new Vuex.Store({
     },
     move ({ state, commit, dispatch }, payload) {
       commit('move', payload)
-      const win = state.map.indexOf('H') === -1
-      const earlyExit = state.charAtNewIndex === 'X'
+      const win = !state.map.match(uppercaseHousesRegex)
+      const earlyExit = state.charAtNewIndex === '!'
       if (win || earlyExit) {
         setTimeout(
           () => {

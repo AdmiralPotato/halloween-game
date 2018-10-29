@@ -40,15 +40,29 @@ const light = new THREE.HemisphereLight(0xcefeff, 0xb3eaf0, 0.5)
 scene.add(light)
 scene.fog = new THREE.Fog('#262626', 7, 9)
 
-const icoSphere = new THREE.IcosahedronGeometry(0.5, 1)
+const shape = new THREE.ConeGeometry(0.5, 0.5, 8)
 const streetMat = new THREE.MeshStandardMaterial({ color: '#333333' })
+const houseCandyMat = new THREE.MeshStandardMaterial({ color: '#ff9900' })
+const houseEmptyMat = new THREE.MeshStandardMaterial({ color: '#443300' })
 const matMap = {
-  H: new THREE.MeshStandardMaterial({ color: '#ff9900' }),
-  h: new THREE.MeshStandardMaterial({ color: '#443300' }),
   G: new THREE.MeshStandardMaterial({ color: '#ffffff' }),
   S: new THREE.MeshStandardMaterial({ color: '#00ff00' }),
-  X: new THREE.MeshStandardMaterial({ color: '#ff0000' })
+  '!': new THREE.MeshStandardMaterial({ color: '#ff0000' })
 }
+const deg45 = Math.PI / 4
+const houseDirectionMap = {
+  X: 0,
+  Z: -deg45,
+  A: -deg45 * 2,
+  Q: -deg45 * 3,
+  W: -deg45 * 4,
+  E: -deg45 * 5,
+  D: -deg45 * 6,
+  C: -deg45 * 7
+}
+const housesRegex = /[QWEDCXZA]/gim
+const housesUpperRegex = /[QWEDCXZA]/gm
+const housesLowerRegex = /[qwedcxza]/gm
 
 let lastLevel = null
 let itemLevelMap = {}
@@ -78,16 +92,29 @@ const mapAsciiStateToThree = (map, currentLevel) => {
       const x = (index - y) % xMax
       let item = itemHolder.children[index]
       if (!item) {
-        item = new THREE.Mesh(icoSphere)
+        if (char !== '\n') {
+          item = new THREE.Mesh(shape)
+          item.position.x = -(x + xOffset)
+          item.position.y = (y + yOffset)
+          if (char.match(housesRegex)) {
+            item.rotation.z = houseDirectionMap[char.toLocaleUpperCase()]
+          }
+        } else {
+          item = new THREE.Object3D()
+        }
         itemHolder.add(item)
-        item.position.x = -(x + xOffset)
-        item.position.y = (y + yOffset)
       }
     })
   }
   chars.forEach((char, index) => {
     let item = itemHolder.children[index]
-    item.material = matMap[char] || streetMat
+    let material = matMap[char]
+    if (!material && char.match(housesUpperRegex)) {
+      material = houseCandyMat
+    } else if (!material && char.match(housesLowerRegex)) {
+      material = houseEmptyMat
+    }
+    item.material = material || streetMat
   })
   scene.add(itemHolder)
 }
@@ -114,7 +141,7 @@ const resize = () => {
     renderer.domElement.height !== height
   ) {
     const aspect = width / height
-    const desiredMinimumFov = Math.PI / 4 // 45 deg
+    const desiredMinimumFov = deg45
     // this ensures that I always have a 90deg square in the center of both landscape and portrait viewports
     camera.fov = (
       aspect >= 1 ? desiredMinimumFov : 2 * Math.atan(Math.tan(desiredMinimumFov / 2) / aspect)
