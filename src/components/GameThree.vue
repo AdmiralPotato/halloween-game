@@ -335,32 +335,35 @@ export default {
     go = false
   },
   beforeUpdate () {
-    if (
-      this.map &&
-      this.loaded &&
-      this.lastMap !== this.map &&
-      this.currentLevel !== null
-    ) {
-      mapAsciiStateToThree(
-        this.map,
-        this.levels[this.currentLevel],
-        this.currentLevel,
-        this.lastDirection
-      )
-      this.lastMap = this.map
-    }
+    this.updateState()
   },
   methods: {
     async startLoad () {
       await loadGltfAssets(['city'])
       console.log('Loaded', unpackedObjectMap)
       this.loaded = true
-      mapAsciiStateToThree(
-        this.map,
-        this.levels[this.currentLevel],
-        this.currentLevel,
-        this.lastDirection
-      )
+      this.updateState()
+    },
+    updateState () {
+      if (
+        this.map &&
+        this.loaded &&
+        this.lastMap !== this.map &&
+        this.currentLevel !== null
+      ) {
+        mapAsciiStateToThree(
+          this.map,
+          this.levels[this.currentLevel],
+          this.currentLevel,
+          this.lastDirection
+        )
+        this.lastMap = this.map
+      }
+    }
+  },
+  watch: {
+    currentLevel () {
+      this.updateState()
     }
   }
 }

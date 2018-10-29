@@ -101,11 +101,6 @@ export default new Vuex.Store({
     move (state, payload) {
       const direction = payload
       const newState = changeStateByDirection(state, direction)
-      console.log('store.mutations.move', {
-        direction,
-        ...newState,
-        state
-      })
       state.lastDirection = direction
       state.map = newState.map
       state.score = newState.score
