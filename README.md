@@ -1,5 +1,9 @@
 # halloween-game
 
+A game about collecting candy on Halloween!
+
+https://admiralpotato.github.io/halloween-game/
+
 ## Project setup
 ```
 npm install
