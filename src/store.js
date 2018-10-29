@@ -7,7 +7,7 @@ const spliceSlice = (str, index, count, add) => {
   return str.slice(0, index) + add + str.slice(index + count)
 }
 const uppercaseHousesRegex = /[QWEDCXZA]/gm
-const getCoordOfDirection = (state, direction) => {
+const changeStateByDirection = (state, direction) => {
   const mapLast = state.map
   const xMax = mapLast.indexOf('\n', 1) - 1
   const yMax = (mapLast.match(/\n/g) || []).length - 1
@@ -58,6 +58,7 @@ const getCoordOfDirection = (state, direction) => {
 export default new Vuex.Store({
   state: {
     charAtNewIndex: null,
+    lastDirection: null,
     moves: 0,
     score: 0,
     levels: [],
@@ -80,6 +81,9 @@ export default new Vuex.Store({
     },
     currentLevel: state => {
       return state.currentLevel
+    },
+    lastDirection: state => {
+      return state.lastDirection
     }
   },
   mutations: {
@@ -96,12 +100,13 @@ export default new Vuex.Store({
     },
     move (state, payload) {
       const direction = payload
-      const newState = getCoordOfDirection(state, direction)
+      const newState = changeStateByDirection(state, direction)
       console.log('store.mutations.move', {
         direction,
         ...newState,
         state
       })
+      state.lastDirection = direction
       state.map = newState.map
       state.score = newState.score
       state.moves = newState.moves

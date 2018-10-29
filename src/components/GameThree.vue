@@ -100,7 +100,7 @@ scene.add(light)
 scene.fog = new THREE.Fog('#5d3758', 9, 12)
 
 const deg45 = Math.PI / 4
-const charDirectionMap = {
+const directionMap = {
   X: -deg45 * 4,
   Z: -deg45 * 6,
   A: -deg45 * 6,
@@ -127,7 +127,11 @@ const charDirectionMap = {
   '╹': 0,
   '╺': -deg45 * 2,
   '╸': -deg45 * 6,
-  'P': 0
+  'P': 0,
+  'up': -deg45 * 2,
+  'down': -deg45 * 6,
+  'left': 0,
+  'right': -deg45 * 4
 }
 const charModelMap = {
   'G': 'ghost',
@@ -172,7 +176,7 @@ const getHouseRandom = () => {
 let lastLevel = null
 let itemLevelMap = {}
 let player
-const mapAsciiStateToThree = (map, mapRaw, currentLevel) => {
+const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
   if (lastLevel !== currentLevel) {
     const lastItemHolder = itemLevelMap[lastLevel]
     if (lastItemHolder) {
@@ -203,7 +207,7 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel) => {
           if (modelName === 'house') {
             modelName = getHouseRandom()
           }
-          const rotation = charDirectionMap[charUpper] || 0
+          const rotation = directionMap[charUpper] || 0
           item = unpackedObjectMap[modelName].clone()
           item.position.x = -(x + xOffset)
           item.position.y = (y + yOffset)
@@ -229,8 +233,10 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel) => {
     if (char === 'G') {
       const y = Math.floor(index / (xMax + 1))
       const x = (index - y) % xMax
+      const rotation = directionMap[lastDirection] || 0
       player.position.x = -(x + xOffset)
       player.position.y = y + yOffset
+      player.rotation.z = rotation
     }
     let item = itemHolder.children[index]
     if (item.name.indexOf('house') === 0) {
@@ -314,6 +320,7 @@ export default {
   computed: {
     ...mapGetters([
       'currentLevel',
+      'lastDirection',
       'levels',
       'score',
       'moves',
@@ -334,7 +341,12 @@ export default {
       this.lastMap !== this.map &&
       this.currentLevel !== null
     ) {
-      mapAsciiStateToThree(this.map, this.levels[this.currentLevel], this.currentLevel)
+      mapAsciiStateToThree(
+        this.map,
+        this.levels[this.currentLevel],
+        this.currentLevel,
+        this.lastDirection
+      )
       this.lastMap = this.map
     }
   },
@@ -343,7 +355,12 @@ export default {
       await loadGltfAssets(['city'])
       console.log('Loaded', unpackedObjectMap)
       this.loaded = true
-      mapAsciiStateToThree(this.map, this.levels[this.currentLevel], this.currentLevel)
+      mapAsciiStateToThree(
+        this.map,
+        this.levels[this.currentLevel],
+        this.currentLevel,
+        this.lastDirection
+      )
     }
   }
 }
