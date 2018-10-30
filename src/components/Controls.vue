@@ -14,7 +14,8 @@
         >
           <div
             class="control"
-            @click.prevent.stop="$store.dispatch('move', item.direction)"
+            @touchstart.prevent.stop="$store.dispatch('move', item.direction)"
+            @mousedown.prevent.stop="$store.dispatch('move', item.direction)"
           >{{item.label}}</div>
         </div>
       </div>

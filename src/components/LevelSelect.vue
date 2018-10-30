@@ -5,7 +5,8 @@
       :key="index"
       class="control"
       :class="{active: $store.getters.currentLevel === index}"
-      @click.prevent.stop="$store.dispatch('startLevel', index)"
+      @touchstart.prevent.stop="$store.dispatch('startLevel', index)"
+      @mousedown.prevent.stop="$store.dispatch('startLevel', index)"
     >{{index}}</div>
   </div>
 </template>
