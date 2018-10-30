@@ -1,20 +1,28 @@
 <template>
   <div id="app">
     <GameThree />
-    <GameAscii />
+    <GameAscii v-if="debug" />
     <Controls />
+    <LevelSelect />
   </div>
 </template>
 
 <script>
 import Controls from './components/Controls'
+import LevelSelect from './components/LevelSelect'
 import GameAscii from './components/GameAscii'
 import GameThree from './components/GameThree'
 
 export default {
   name: 'app',
+  data () {
+    return {
+      debug: false
+    }
+  },
   components: {
     Controls,
+    LevelSelect,
     GameAscii,
     GameThree
   },

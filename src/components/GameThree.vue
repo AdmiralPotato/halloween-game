@@ -1,7 +1,6 @@
 <template>
   <div class="game-three">
-    <p>Score: {{score}}</p>
-    <p>Moves: {{moves}}</p>
+    <div class="has-to-be-here-for-reactivity">Score: {{score}} Moves: {{moves}} Map: {{map}}</div>
   </div>
 </template>
 
@@ -403,14 +402,20 @@ export default {
 <style lang="scss">
 .game-three {
   position: absolute;
+  z-index: 0;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
 
+  .has-to-be-here-for-reactivity {
+    display: none;
+  }
+
   canvas {
     display: block;
     position: absolute;
+    z-index: 0;
     top: 0;
     left: 0;
     width: 100%;
