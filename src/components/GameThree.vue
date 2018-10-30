@@ -282,17 +282,19 @@ const resize = () => {
     center.set(width / 2, height / 2)
   }
 }
+let controls
 let go = true
 const loop = (time) => {
   if (go) {
     requestAnimationFrame(loop)
     resize()
+    controls.update()
     animate(time)
   }
 }
 const start = (parentNode) => {
   parentNode.appendChild(renderer.domElement)
-  let controls = new THREE.OrbitControls(camera, renderer.domElement)
+  controls = new THREE.OrbitControls(camera, renderer.domElement)
   camera.position.set(0, 8, -4)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
   camera.rotation.z = -Math.PI
