@@ -9,6 +9,7 @@
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^17.2.0",
     "three": "^0.97.0",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"

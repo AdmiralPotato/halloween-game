@@ -7,6 +7,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import TWEEN from '@tweenjs/tween.js'
 import * as THREE from 'three'
 window.THREE = THREE
 require('three/examples/js/loaders/GLTFLoader')
@@ -173,14 +174,26 @@ const getHouseRandom = () => {
   return houses[index]
 }
 
+const levelHolder = new THREE.Object3D()
+levelHolder.rotation.x = -deg45 * 2
+scene.add(levelHolder)
+
 let lastLevel = null
 let itemLevelMap = {}
 let player
+let playerTweenQueue = []
+const playerTweenOnComplete = () => {
+  playerTweenQueue.shift()
+  const nextTween = playerTweenQueue[0]
+  if (nextTween) {
+    nextTween.start()
+  }
+}
 const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
   if (lastLevel !== currentLevel) {
     const lastItemHolder = itemLevelMap[lastLevel]
     if (lastItemHolder) {
-      scene.remove(lastItemHolder)
+      levelHolder.remove(lastItemHolder)
     }
     lastLevel = currentLevel
   }
@@ -189,13 +202,13 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
   const yMax = (map.match(/\n/g) || []).length - 1
   const xOffset = (-xMax / 2) + 0.5
   const yOffset = (-yMax / 2)
+  // const largestAxis = Math.max(xMax, yMax)
+  // const scale = (1 / largestAxis) * 5
+  // levelHolder.scale.setScalar(scale)
   if (!itemHolder) {
     let chars = [...mapRaw]
     chars.shift()
-    const largestAxis = Math.max(xMax, yMax)
-    const scale = (1 / largestAxis) * 5
     itemHolder = itemLevelMap[currentLevel] = new THREE.Object3D()
-    itemHolder.scale.setScalar(scale)
     chars.forEach((char, index) => {
       const y = Math.floor(index / (xMax + 1))
       const x = (index - y) % xMax
@@ -219,7 +232,6 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
           item = new THREE.Object3D()
         }
         itemHolder.add(item)
-        itemHolder.rotation.x = -deg45 * 2
       }
     })
   }
@@ -234,8 +246,24 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
       const y = Math.floor(index / (xMax + 1))
       const x = (index - y) % xMax
       const rotation = directionMap[lastDirection] || 0
-      player.position.x = -(x + xOffset)
-      player.position.y = y + yOffset
+      const tween = new TWEEN.Tween(player.position)
+        .to(
+          {
+            x: -(x + xOffset),
+            y: y + yOffset
+          },
+          100
+        )
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          itemHolder.position.x = -player.position.x
+          itemHolder.position.y = -player.position.y
+        })
+        .onComplete(playerTweenOnComplete)
+      playerTweenQueue.push(tween)
+      if (playerTweenQueue.length < 2) {
+        tween.start()
+      }
       player.rotation.z = rotation
     }
     let item = itemHolder.children[index]
@@ -244,7 +272,7 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
       item.children[0].visible = show
     }
   })
-  scene.add(itemHolder)
+  levelHolder.add(itemHolder)
 }
 
 renderer.shadowMap.enabled = true
@@ -288,19 +316,18 @@ const loop = (time) => {
   if (go) {
     requestAnimationFrame(loop)
     resize()
-    controls.update()
     animate(time)
   }
 }
 const start = (parentNode) => {
   parentNode.appendChild(renderer.domElement)
   controls = new THREE.OrbitControls(camera, renderer.domElement)
-  camera.position.set(0, 8, -4)
+  camera.position.set(-1, 6, -5)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
-  camera.rotation.z = -Math.PI
   controls.enableDamping = true // an animation loop is required when either damping or auto-rotation are enabled
   controls.dampingFactor = 0.25
   controls.screenSpacePanning = false
+  controls.enablePan = false
   controls.minDistance = 1
   controls.maxDistance = 10
   controls.minPolarAngle = -Infinity // Math.PI / 2
@@ -309,6 +336,8 @@ const start = (parentNode) => {
 }
 
 const animate = (time) => {
+  controls.update()
+  TWEEN.update(time)
   renderer.render(scene, camera)
 }
 
