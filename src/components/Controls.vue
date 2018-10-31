@@ -36,8 +36,8 @@
     >
       <div
         class="control"
-        @mousedown.prevent.stop="$emit('levelSelect')"
-        @touchstart.prevent.stop="$emit('levelSelect')"
+        @mousedown.prevent.stop="$store.dispatch('mode', 'levelSelect')"
+        @touchstart.prevent.stop="$store.dispatch('mode', 'levelSelect')"
       >
         <svg viewBox="0 0 32 32">
           <path d="M23.374,8.626H8.626 c-0.393,0-0.712,0.319-0.712,0.712v1.508c0,0.393,0.319,0.712,0.712,0.712h14.747c0.393,0,0.712-0.319,0.712-0.712V9.338 C24.086,8.945,23.767,8.626,23.374,8.626z M23.374,14.534H8.626c-0.393,0-0.712,0.319-0.712,0.712v1.508 c0,0.393,0.319,0.712,0.712,0.712h14.747c0.393,0,0.712-0.319,0.712-0.712v-1.508C24.086,14.853,23.767,14.534,23.374,14.534z M23.374,20.441H8.626c-0.393,0-0.712,0.319-0.712,0.712v1.508c0,0.393,0.319,0.712,0.712,0.712h14.747 c0.393,0,0.712-0.319,0.712-0.712v-1.508C24.086,20.76,23.767,20.441,23.374,20.441z" />
@@ -116,7 +116,6 @@ export default {
   methods: {
     handleKeydown (event) {
       const direction = keyMap[event.key]
-      console.log('event.key', event.key)
       if (direction) {
         event.preventDefault()
         event.stopPropagation()

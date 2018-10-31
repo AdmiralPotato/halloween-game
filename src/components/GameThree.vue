@@ -1,6 +1,12 @@
 <template>
   <div class="game-three">
-    <div class="has-to-be-here-for-reactivity">Score: {{score}} Moves: {{moves}} Map: {{map}}</div>
+    <div class="has-to-be-here-for-reactivity">
+      <pre>
+Score: {{score}}
+Moves: {{moves}}
+{{map}}
+      </pre>
+</div>
   </div>
 </template>
 
@@ -410,6 +416,14 @@ export default {
 
   .has-to-be-here-for-reactivity {
     display: none;
+
+    pre {
+      font-family: monospace;
+      font-size: 1.5rem;
+      line-height: 1.25rem;
+      letter-spacing: 0.25rem;
+      text-align: left;
+    }
   }
 
   canvas {

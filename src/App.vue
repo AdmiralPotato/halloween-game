@@ -1,40 +1,31 @@
 <template>
   <div id="app">
     <GameThree />
-    <GameAscii v-if="debug" />
-    <Controls
-      v-if="!levelSelect"
-      @levelSelect="levelSelect = !levelSelect"
-    />
-    <LevelSelect
-      @levelSelect="levelSelect = !levelSelect"
-      v-if="levelSelect"
-    />
+    <Controls v-if="mode === 'play'" />
+    <LevelSelect v-if="mode === 'levelSelect'" />
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Controls from './components/Controls'
 import LevelSelect from './components/LevelSelect'
-import GameAscii from './components/GameAscii'
 import GameThree from './components/GameThree'
 
 export default {
   name: 'app',
-  data () {
-    return {
-      debug: false,
-      levelSelect: false
-    }
-  },
   components: {
     Controls,
     LevelSelect,
-    GameAscii,
     GameThree
   },
   async mounted () {
     this.$store.dispatch('loadLevels')
+  },
+  computed: {
+    ...mapGetters([
+      'mode'
+    ])
   }
 }
 </script>
