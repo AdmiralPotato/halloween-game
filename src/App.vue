@@ -2,8 +2,14 @@
   <div id="app">
     <GameThree />
     <GameAscii v-if="debug" />
-    <Controls />
-    <LevelSelect />
+    <Controls
+      v-if="!levelSelect"
+      @levelSelect="levelSelect = !levelSelect"
+    />
+    <LevelSelect
+      @levelSelect="levelSelect = !levelSelect"
+      v-if="levelSelect"
+    />
   </div>
 </template>
 
@@ -17,7 +23,8 @@ export default {
   name: 'app',
   data () {
     return {
-      debug: false
+      debug: false,
+      levelSelect: false
     }
   },
   components: {
@@ -33,15 +40,54 @@ export default {
 </script>
 
 <style lang="scss">
+html, body {
+  padding: 0;
+  margin: 0;
+}
 body {
   background-color: #5d3758;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Knewave, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #ccc;
-  margin-top: 60px;
+  height: 100%;
+}
+
+.control {
+  display: inline-block;
+  margin: 0.5rem;
+  cursor: pointer;
+  position: relative;
+  text-align: center;
+  line-height: 3.5rem;
+  font-size: 3rem;
+  border-radius: 1rem;
+  background-color: #40408a;
+  width: 4rem;
+  height: 4rem;
+  &.active,
+  &:active {
+    background-color: #ddd;
+    color: #fa0;
+
+    svg {
+      path {
+        fill: #fa0;
+      }
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    path {
+      fill: #ddd;
+    }
+  }
 }
 </style>
