@@ -137,10 +137,11 @@ export default new Vuex.Store({
       const win = !state.map.match(uppercaseHousesRegex)
       const earlyExit = state.charAtNewIndex === '!'
       if (win || earlyExit) {
+        const nextLevel = (state.currentLevel + 1) % state.levels.length
         setTimeout(
           () => {
             alert(`END. MOVES: ${state.moves}, SCORE: ${state.score}`)
-            dispatch('startLevel', state.currentLevel)
+            dispatch('startLevel', nextLevel)
           },
           200
         )
