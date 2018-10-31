@@ -4,6 +4,7 @@
     <Controls v-if="mode === 'play'" />
     <LevelSelect v-if="mode === 'levelSelect'" />
     <LevelWin v-if="mode === 'levelWin'" />
+    <CharacterSelect v-if="mode === 'characterSelect'" />
   </div>
 </template>
 
@@ -13,10 +14,12 @@ import Controls from './components/Controls'
 import LevelSelect from './components/LevelSelect'
 import LevelWin from './components/LevelWin'
 import GameThree from './components/GameThree'
+import CharacterSelect from './components/CharacterSelect'
 
 export default {
   name: 'app',
   components: {
+    CharacterSelect,
     Controls,
     LevelSelect,
     LevelWin,
@@ -40,6 +43,12 @@ html, body {
 }
 body {
   background-color: #5d3758;
+}
+
+body *,
+body *:before,
+body *:after {
+  box-sizing: border-box;
 }
 #app {
   font-family: Knewave, sans-serif;

@@ -63,8 +63,9 @@ export default new Vuex.Store({
     score: 0,
     levels: [],
     roadTiles: [],
-    mode: 'play',
-    modePrevious: 'play',
+    mode: 'characterSelect',
+    modePrevious: 'characterSelect',
+    character: null,
     currentLevel: null,
     map: null
   },
@@ -83,6 +84,9 @@ export default new Vuex.Store({
     },
     modePrevious: state => {
       return state.modePrevious
+    },
+    character: state => {
+      return state.character
     },
     levels: state => {
       return state.levels
@@ -109,6 +113,9 @@ export default new Vuex.Store({
     mode (state, payload) {
       state.modePrevious = state.mode
       state.mode = payload
+    },
+    selectCharacter (state, payload) {
+      state.character = payload
     },
     move (state, payload) {
       const direction = payload
@@ -137,9 +144,11 @@ export default new Vuex.Store({
     },
     setLevels ({ commit, dispatch }, payload) {
       commit('setLevels', payload)
-      if (payload.levels.length) {
-        dispatch('startLevel', 0)
-      }
+    },
+    selectCharacter ({ commit, dispatch }, payload) {
+      commit('selectCharacter', payload)
+      dispatch('startLevel', 0)
+      dispatch('mode', 'play')
     },
     startLevel ({ commit, dispatch }, payload) {
       commit('startLevel', payload)

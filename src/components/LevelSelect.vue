@@ -21,6 +21,11 @@
         @touchstart.prevent.stop="$store.dispatch('startLevel', index)"
         @mousedown.prevent.stop="$store.dispatch('startLevel', index)"
       >{{index + 1}}</div>
+      <div
+        class="control characters"
+        @mousedown.prevent.stop="$store.dispatch('mode', 'characterSelect')"
+        @touchstart.prevent.stop="$store.dispatch('mode', 'characterSelect')"
+      >Characters</div>
     </div>
   </div>
 </template>
@@ -34,7 +39,7 @@
   right: 0;
   bottom: 0;
   width: 17rem;
-  height: 21rem;
+  height: 26rem;
   margin: auto;
   background-color: #382440;
   border-radius: 1rem;
@@ -63,6 +68,10 @@
     right: 0;
     width: 15rem;
     margin: auto;
+  }
+  .characters {
+    width: 14rem;
+    font-size: 1.75rem;
   }
 }
 </style>
