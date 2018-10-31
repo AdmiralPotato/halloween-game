@@ -130,8 +130,8 @@ export default {
       .control-spacer {
         position: absolute;
         display: block;
-        width: 4rem;
-        height: 4rem;
+        width: 5rem;
+        height: 5rem;
         padding: 0.5rem;
         margin: auto;
         top: 0;

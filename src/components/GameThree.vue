@@ -2,6 +2,8 @@
   <div class="game-three">
     <div class="has-to-be-here-for-reactivity">
       <pre>
+Mode: {{mode}}
+Character: {{character}}
 Score: {{score}}
 Moves: {{moves}}
 {{map}}
@@ -181,11 +183,10 @@ const getHouseRandom = () => {
 
 const levelHolder = new THREE.Object3D()
 levelHolder.rotation.x = -deg45 * 2
-scene.add(levelHolder)
 
 let lastLevel = null
 let itemLevelMap = {}
-let player
+let player = new THREE.Object3D()
 let playerTweenQueue = []
 const playerTweenOnComplete = () => {
   playerTweenQueue.shift()
@@ -194,7 +195,53 @@ const playerTweenOnComplete = () => {
     nextTween.start()
   }
 }
-const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
+
+let characterMountA = new THREE.Object3D()
+let characterMountB = new THREE.Object3D()
+characterMountA.scale.setScalar(2.5)
+characterMountB.scale.setScalar(2.5)
+characterMountA.position.set(1, -0.65, 0)
+characterMountB.position.set(-1, -0.55, 0)
+characterMountA.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2)
+characterMountB.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2)
+
+const changeSceneMode = (mode, character) => {
+  if (mode === 'characterSelect') {
+    scene.remove(levelHolder)
+    scene.add(characterMountA)
+    scene.add(characterMountB)
+    unpackedObjectMap.ghost_root.position.set(0, 0, 0)
+    unpackedObjectMap.alien_root.position.set(0, 0, 0)
+    characterMountA.add(unpackedObjectMap.ghost_root)
+    characterMountB.add(unpackedObjectMap.alien_root)
+    camera.position.set(0, 0, -5)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    controls.update()
+  }
+  if (mode === 'play') {
+    scene.add(levelHolder)
+    scene.remove(characterMountA)
+    scene.remove(characterMountB)
+    changeCharacter(character)
+    camera.position.set(-1, 6, -5)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    controls.update()
+  }
+}
+
+const changeCharacter = (character) => {
+  player.remove(player.children[0])
+  const playerAvatar = unpackedObjectMap[`${character}_root`]
+  playerAvatar.position.set(0, 0, 0)
+  player.add(playerAvatar)
+}
+
+const mapAsciiStateToThree = ({
+  map,
+  mapRaw,
+  currentLevel,
+  lastDirection
+}) => {
   if (lastLevel !== currentLevel) {
     const lastItemHolder = itemLevelMap[lastLevel]
     if (lastItemHolder) {
@@ -239,9 +286,6 @@ const mapAsciiStateToThree = (map, mapRaw, currentLevel, lastDirection) => {
         itemHolder.add(item)
       }
     })
-  }
-  if (!player) {
-    player = unpackedObjectMap.ghost.clone()
   }
   itemHolder.add(player)
   let chars = [...map]
@@ -355,6 +399,8 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'mode',
+      'character',
       'currentLevel',
       'lastDirection',
       'levels',
@@ -375,10 +421,19 @@ export default {
   },
   methods: {
     async startLoad () {
-      await loadGltfAssets(['city'])
+      await loadGltfAssets([
+        'city',
+        'characters'
+      ])
+      // TODO: Figure out why these aren't working
+      // scene.add(gltfAssetMap.characters.scene)
+      // gltfAssetMap.characters.playAnimationByName('alien_idle')
+      // gltfAssetMap.characters.playAnimationByName('ghost_idle')
+
       console.log('Loaded', unpackedObjectMap)
       this.loaded = true
       this.updateState()
+      changeSceneMode(this.mode, this.character)
     },
     updateState () {
       if (
@@ -387,17 +442,20 @@ export default {
         this.lastMap !== this.map &&
         this.currentLevel !== null
       ) {
-        mapAsciiStateToThree(
-          this.map,
-          this.levels[this.currentLevel],
-          this.currentLevel,
-          this.lastDirection
-        )
+        mapAsciiStateToThree({
+          map: this.map,
+          mapRaw: this.levels[this.currentLevel],
+          currentLevel: this.currentLevel,
+          lastDirection: this.lastDirection
+        })
         this.lastMap = this.map
       }
     }
   },
   watch: {
+    mode () {
+      changeSceneMode(this.mode, this.character)
+    },
     currentLevel () {
       this.updateState()
     }
