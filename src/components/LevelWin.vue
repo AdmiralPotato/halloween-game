@@ -3,16 +3,18 @@
     <h1>You Win!</h1>
     <score />
     <div class="controls">
-      <div
+      <button
         class="control options"
-        @mousedown.prevent.stop="$store.dispatch('startLevel', $store.getters.currentLevel)"
+        type="button"
+        @mousedown="$store.dispatch('startLevel', $store.getters.currentLevel)"
         @touchstart.prevent.stop="$store.dispatch('startLevel', $store.getters.currentLevel)"
-      >Replay</div>
-      <div
+      >Replay</button>
+      <button
         class="control options"
-        @mousedown.prevent.stop="$store.dispatch('nextLevel')"
+        type="button"
+        @mousedown="$store.dispatch('nextLevel')"
         @touchstart.prevent.stop="$store.dispatch('nextLevel')"
-      >Next Level</div>
+      >Next Level</button>
     </div>
   </div>
 </template>

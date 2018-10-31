@@ -69,12 +69,20 @@ body *:after {
   font-size: 3rem;
   border-radius: 1rem;
   background-color: #40408a;
+  color: #ddd;
   width: 4rem;
   height: 4rem;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  font-family: Knewave, sans-serif;
+
   &.active,
   &:active {
     background-color: #ddd;
     color: #fa0;
+    outline: none;
 
     svg {
       path {

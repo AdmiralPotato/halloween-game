@@ -6,15 +6,16 @@
     <div
       class="menu-toggle"
     >
-      <div
+      <button
         class="control"
-        @mousedown.prevent.stop="$store.dispatch('mode', 'levelSelect')"
-        @touchstart.prevent.stop="$store.dispatch('mode', 'levelSelect')"
+        type="button"
+        @mousedown="$store.dispatch('mode', 'levelSelect')"
+        @touchstart="$store.dispatch('mode', 'levelSelect')"
       >
         <svg viewBox="0 0 32 32">
           <path d="M23.374,8.626H8.626 c-0.393,0-0.712,0.319-0.712,0.712v1.508c0,0.393,0.319,0.712,0.712,0.712h14.747c0.393,0,0.712-0.319,0.712-0.712V9.338 C24.086,8.945,23.767,8.626,23.374,8.626z M23.374,14.534H8.626c-0.393,0-0.712,0.319-0.712,0.712v1.508 c0,0.393,0.319,0.712,0.712,0.712h14.747c0.393,0,0.712-0.319,0.712-0.712v-1.508C24.086,14.853,23.767,14.534,23.374,14.534z M23.374,20.441H8.626c-0.393,0-0.712,0.319-0.712,0.712v1.508c0,0.393,0.319,0.712,0.712,0.712h14.747 c0.393,0,0.712-0.319,0.712-0.712v-1.508C24.086,20.76,23.767,20.441,23.374,20.441z" />
         </svg>
-      </div>
+      </button>
     </div>
     <div class="arrows">
       <div class="relative">
@@ -24,15 +25,16 @@
           class="control-spacer"
           :class="item.direction"
         >
-          <div
+          <button
             class="control"
+            type="button"
             @touchstart.prevent.stop="$store.dispatch('move', item.direction)"
-            @mousedown.prevent.stop="$store.dispatch('move', item.direction)"
+            @mousedown="$store.dispatch('move', item.direction)"
           >
             <svg viewBox="0 0 32 32">
               <path :d="item.path" />
             </svg>
-          </div>
+          </button>
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@
           :key="item"
           :class="item"
           @touchstart.prevent.stop="$store.dispatch('selectCharacter', item)"
-          @mousedown.prevent.stop="$store.dispatch('selectCharacter', item)"
+          @mousedown="$store.dispatch('selectCharacter', item)"
         ></div>
       </div>
     </div>
@@ -41,10 +41,20 @@ export default {
   height: 100%;
   border-radius: 1rem;
   h1 {
-    padding: 0 2rem;
+    padding: 2rem;
     margin: 0;
-    line-height: 5rem;
+    line-height: 3rem;
     font-size: 3rem;
+    width: 100%;
+    color: #ddd;
+  }
+  p {
+    position: absolute;
+    bottom: 4rem;
+    padding: 0 1rem;
+    margin: 0;
+    line-height: 2rem;
+    font-size: 1.5rem;
     width: 100%;
     color: #ddd;
   }
