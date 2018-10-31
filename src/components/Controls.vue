@@ -72,7 +72,20 @@ const keyMap = {
   'ArrowUp': 'up',
   'ArrowDown': 'down',
   'ArrowLeft': 'left',
-  'ArrowRight': 'right'
+  'ArrowRight': 'right',
+  'w': 'up',
+  's': 'down',
+  'a': 'left',
+  'd': 'right',
+  'W': 'up',
+  'S': 'down',
+  'A': 'left',
+  'D': 'right',
+  '8': 'up',
+  '2': 'down',
+  '5': 'down',
+  '4': 'left',
+  '6': 'right'
 }
 export default {
   name: 'Controls',
@@ -103,6 +116,7 @@ export default {
   methods: {
     handleKeydown (event) {
       const direction = keyMap[event.key]
+      console.log('event.key', event.key)
       if (direction) {
         event.preventDefault()
         event.stopPropagation()
