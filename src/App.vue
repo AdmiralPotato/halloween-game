@@ -3,6 +3,7 @@
     <GameThree />
     <Controls v-if="mode === 'play'" />
     <LevelSelect v-if="mode === 'levelSelect'" />
+    <LevelWin v-if="mode === 'levelWin'" />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import { mapGetters } from 'vuex'
 import Controls from './components/Controls'
 import LevelSelect from './components/LevelSelect'
+import LevelWin from './components/LevelWin'
 import GameThree from './components/GameThree'
 
 export default {
@@ -17,6 +19,7 @@ export default {
   components: {
     Controls,
     LevelSelect,
+    LevelWin,
     GameThree
   },
   async mounted () {

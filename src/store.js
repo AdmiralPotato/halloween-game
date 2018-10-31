@@ -141,22 +141,25 @@ export default new Vuex.Store({
         dispatch('startLevel', 0)
       }
     },
-    startLevel ({ commit }, payload) {
+    startLevel ({ commit, dispatch }, payload) {
       commit('startLevel', payload)
+      dispatch('mode', 'play')
     },
     mode ({ state, commit }, payload) {
       commit('mode', payload)
+    },
+    nextLevel ({ state, commit, dispatch }) {
+      const nextLevel = (state.currentLevel + 1) % state.levels.length
+      dispatch('startLevel', nextLevel)
     },
     move ({ state, commit, dispatch }, payload) {
       commit('move', payload)
       const win = !state.map.match(uppercaseHousesRegex)
       const earlyExit = state.charAtNewIndex === '!'
       if (win || earlyExit) {
-        const nextLevel = (state.currentLevel + 1) % state.levels.length
         setTimeout(
           () => {
-            alert(`END. MOVES: ${state.moves}, SCORE: ${state.score}`)
-            dispatch('startLevel', nextLevel)
+            dispatch('mode', 'levelWin')
           },
           200
         )

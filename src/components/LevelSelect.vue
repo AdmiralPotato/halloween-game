@@ -1,5 +1,5 @@
 <template>
-  <div class="levels">
+  <div class="level-select">
     <h1>Level Select</h1>
     <div class="close">
       <div
@@ -25,8 +25,8 @@
   </div>
 </template>
 
-<style lang="scss">
-.levels {
+<style lang="scss" scoped>
+.level-select {
   position: absolute;
   z-index: 1;
   top: 0;
