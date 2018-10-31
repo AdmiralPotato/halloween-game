@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { event } from 'vue-analytics'
 
 Vue.use(Vuex)
 
@@ -55,6 +56,7 @@ const changeStateByDirection = (state, direction) => {
     map
   }
 }
+let totalWinCount = 0
 export default new Vuex.Store({
   state: {
     charAtNewIndex: null,
@@ -142,33 +144,51 @@ export default new Vuex.Store({
         }
       )
     },
-    setLevels ({ commit, dispatch }, payload) {
+    setLevels ({ commit }, payload) {
       commit('setLevels', payload)
     },
-    selectCharacter ({ commit, dispatch }, payload) {
+    selectCharacter ({ commit }, payload) {
       commit('selectCharacter', payload)
-      dispatch('startLevel', 0)
-      dispatch('mode', 'play')
+      commit('startLevel', 0)
+      commit('mode', 'play')
+      event('interaction', 'selectCharacter', payload, null)
     },
-    startLevel ({ commit, dispatch }, payload) {
+    startLevel ({ state, commit }, payload) {
       commit('startLevel', payload)
-      dispatch('mode', 'play')
+      commit('mode', 'play')
+      event('interaction', 'startLevel', null, state.currentLevel)
     },
     mode ({ state, commit }, payload) {
       commit('mode', payload)
+      event('interaction', 'mode', payload, null)
     },
-    nextLevel ({ state, commit, dispatch }) {
+    nextLevel ({ state, commit }) {
       const nextLevel = (state.currentLevel + 1) % state.levels.length
-      dispatch('startLevel', nextLevel)
+      commit('startLevel', nextLevel)
+      commit('mode', 'play')
+      event('interaction', 'nextLevel', null, state.currentLevel)
     },
-    move ({ state, commit, dispatch }, payload) {
+    move ({ state, commit }, payload) {
       commit('move', payload)
       const win = !state.map.match(uppercaseHousesRegex)
       const earlyExit = state.charAtNewIndex === '!'
       if (win || earlyExit) {
+        totalWinCount += 1
+        event(
+          'interaction',
+          'win',
+          `currentLevel: ${state.currentLevel}, score: ${state.score}, moves: ${state.moves}`,
+          totalWinCount
+        )
+        event(
+          'interaction',
+          'winMap',
+          state.map,
+          win ? 1 : 0
+        )
         setTimeout(
           () => {
-            dispatch('mode', 'levelWin')
+            commit('mode', 'levelWin')
           },
           200
         )

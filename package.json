@@ -12,6 +12,7 @@
     "@tweenjs/tween.js": "^17.2.0",
     "three": "^0.97.0",
     "vue": "^2.5.17",
+    "vue-analytics": "^5.16.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
