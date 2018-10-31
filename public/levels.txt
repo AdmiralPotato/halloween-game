@@ -38,13 +38,13 @@ D┃ZC┃Zc┃A
 D┗━━┻━━┻!
 PWWwwWWwP
 
-PXxXXXxxXXxP
+PXxXXxxXxXxP
 D┏━━━━━━━━┓a
-d┃QwWWwwWe┃a
-D┃APxxXXPD┃A
-d┃aD┏━━┓ad┃a
+d┃QwWWwwWe┃A
+D┃aPxxXXPD┃a
+d┃AD┏━━┓ad┃a
 d┃aDSWe┃Ad┃A
-D┃ZxXXc┃AD┃a
+D┃ZxXxC┃AD┃a
 d┗━━━━━┛ad┃a
 PwwWWWwwPD┃A
 PXxXxXxXxc┃a
@@ -56,7 +56,7 @@ D┏━━━┻━━━┓A
 D┃QwWwwWE┃a
 d┃ZXXXxxc┃A
 d┗━━━┳━━━┛a
-PssWE┃QWWWP
+PwwWE┃QWWWP
 PXPPe┃QXPPP
 d╻APd┃aPd╻a
 D┃zXC┃ZxC┃A
